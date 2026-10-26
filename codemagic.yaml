@@ -1,0 +1,24 @@
+# Codemagic 备用方案（无需自己托管仓库，连 GitHub/GitLab 链接即可）。
+# 在 codemagic.com 导入本仓库，运行此 workflow，下载 Artifacts 里的 qplayer-unsigned.ipa。
+workflows:
+  unsigned-ios:
+    name: Unsigned iOS IPA
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment:
+      flutter: "3.47.8"
+      xcode: latest
+    scripts:
+      - name: Pub get
+        script: flutter pub get
+      - name: Build unsigned iOS app
+        script: flutter build ios --release --no-codesign
+      - name: Package unsigned IPA
+        script: |
+          set -e
+          cd build/ios/Release-iphoneos
+          mkdir -p Payload
+          cp -R Runner.app Payload/
+          zip -r -9 qplayer-unsigned.ipa Payload
+    artifacts:
+      - build/ios/Release-iphoneos/qplayer-unsigned.ipa
