@@ -37,4 +37,13 @@ class Track {
       displayName: (song.displayName as String?) ?? '',
     );
   }
+
+  /// Stable identity key (absolute file path).
+  String get key => data;
+
+  @override
+  bool operator ==(Object other) => other is Track && other.data == data;
+
+  @override
+  int get hashCode => data.hashCode;
 }

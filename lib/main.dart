@@ -3,9 +3,11 @@ import 'package:audio_service/audio_service.dart';
 import 'package:provider/provider.dart';
 import 'services/player_handler.dart';
 import 'providers/player_provider.dart';
+import 'providers/online_provider.dart';
 import 'theme/app_theme.dart';
 import 'screens/library_screen.dart';
 import 'screens/lyrics_screen.dart';
+import 'screens/online_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/now_playing_screen.dart';
 import 'widgets/mini_player.dart';
@@ -30,8 +32,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => PlayerProvider(audioHandler)..loadLibrary(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => PlayerProvider(audioHandler)..loadLibrary()),
+        ChangeNotifierProxyProvider<PlayerProvider, OnlineProvider>(
+          create: (ctx) => OnlineProvider(
+              audioHandler, Provider.of<PlayerProvider>(ctx, listen: false)),
+          update: (ctx, player, prev) =>
+              prev ?? OnlineProvider(audioHandler, player),
+        ),
+      ],
       child: MaterialApp(
         title: 'QPlayer',
         theme: AppTheme.light(),
@@ -53,10 +64,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _tab = 0;
-  final List<Widget> _screens = const [
-    LibraryScreen(),
-    LyricsScreen(),
-    SettingsScreen(),
+  final List<Widget> _screens = [
+    const LibraryScreen(),
+    const LyricsScreen(),
+    const OnlineScreen(),
+    const SettingsScreen(),
   ];
 
   @override
@@ -82,6 +94,7 @@ class _HomePageState extends State<HomePage> {
           NavigationDestination(
               icon: Icon(Icons.library_music), label: '资料库'),
           NavigationDestination(icon: Icon(Icons.lyrics), label: '歌词'),
+          NavigationDestination(icon: Icon(Icons.cloud), label: '在线'),
           NavigationDestination(icon: Icon(Icons.settings), label: '设置'),
         ],
       ),

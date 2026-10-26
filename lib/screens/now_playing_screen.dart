@@ -30,9 +30,7 @@ class NowPlayingScreen extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  provider.fluidColor,
-                  provider.fluidColor.withValues(alpha: 0.65),
-                  Colors.black,
+                  provider.fluidColor, provider.fluidColor.withValues(alpha: 0.65), Colors.black,
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -45,12 +43,25 @@ class NowPlayingScreen extends StatelessWidget {
                     backgroundColor: Colors.transparent,
                     elevation: 0,
                     leading: IconButton(
-                      icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white),
+                      icon: const Icon(Icons.keyboard_arrow_down,
+                          color: Colors.white),
                       onPressed: () => Navigator.of(context).maybePop(),
                     ),
                     title: const Text('正在播放',
                         style: TextStyle(color: Colors.white)),
                     centerTitle: true,
+                    actions: [
+                      if (track != null)
+                        IconButton(
+                          icon: Icon(
+                            provider.isFavorite(track.data)
+                                ? Icons.favorite
+                                : Icons.favorite_border,
+                            color: Colors.white,
+                          ),
+                          onPressed: () => provider.toggleFavorite(track),
+                        ),
+                    ],
                   ),
                   Expanded(
                     child: Center(

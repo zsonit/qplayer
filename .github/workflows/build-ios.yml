@@ -1,0 +1,44 @@
+name: Build iOS IPA (unsigned)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: '3.47.8'
+
+      - name: Show Flutter version
+        run: flutter --version
+
+      - name: Pub get
+        run: flutter pub get
+
+      - name: Build iOS (unsigned)
+        run: flutter build ios --release --no-codesign
+
+      - name: Package IPA
+        run: |
+          APP_PATH=$(find build/ios -name 'Runner.app' -type d | head -n1)
+          echo "APP_PATH=$APP_PATH"
+          mkdir -p build/Payload
+          cp -r "$APP_PATH" build/Payload/
+          cd build
+          zip -r "$GITHUB_WORKSPACE/qplayer-unsigned.ipa" Payload
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qplayer-unsigned-ipa
+          path: qplayer-unsigned.ipa
+          if-no-files-found: error
