@@ -1,0 +1,26 @@
+name: qplayer
+description: "QPlayer - a modern local music player with fluid lyrics, inspired by QPlayer (TIMER-err)."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.7
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  audio_service: ^0.18.19
+  just_audio: ^0.10.6
+  on_audio_query: ^2.9.0
+  palette_generator: ^0.3.0
+  provider: ^6.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
