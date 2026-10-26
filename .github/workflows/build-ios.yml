@@ -5,6 +5,9 @@ on:
   push:
     branches: [ main, master ]
 
+permissions:
+  contents: write
+
 jobs:
   build-ios:
     runs-on: macos-latest
@@ -42,3 +45,13 @@ jobs:
           name: qplayer-unsigned-ipa
           path: qplayer-unsigned.ipa
           if-no-files-found: error
+
+      - name: Publish IPA to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: unsigned-latest
+          name: QPlayer 未签名 IPA（自动构建）
+          prerelease: true
+          files: qplayer-unsigned.ipa
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
